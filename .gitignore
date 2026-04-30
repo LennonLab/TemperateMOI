@@ -20,6 +20,7 @@
 .Rproj.user/shared_notebooks/
 .Rproj.user/persistent-state
 .Rproj.user/sources/
+*.nb.html
 
 #Producedvignettes
 vignettes/*.html

@@ -11,7 +11,7 @@ library(tidyverse)
 library(ggplot2)
 library(PNWColors)
 library(here)
-
+pal2 <- pnw_palette(name="Starfish",n=2,type="discrete")
 ## load data
 ## og pilot data (spbeta and phi3t lysogens only)
 data_short1 <- read.csv(here("PlvGe/data_PlvGe/20250818_1227_Entrapment_SporevPlaquesCounts_Pilot1_nocountsremoved.csv"))
