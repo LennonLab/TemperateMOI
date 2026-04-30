@@ -1,0 +1,69 @@
+"0","library(tidyverse)"
+"2","Warning: package ‘ggplot2’ was built under R version 4.4.3"
+"2","Warning: package ‘tibble’ was built under R version 4.4.3"
+"2","Warning: package ‘tidyr’ was built under R version 4.4.3"
+"2","Warning: package ‘readr’ was built under R version 4.4.3"
+"2","Warning: package ‘purrr’ was built under R version 4.4.3"
+"2","Warning: package ‘dplyr’ was built under R version 4.4.3"
+"2","Warning: package ‘lubridate’ was built under R version 4.4.3"
+"2","── [1mAttaching core tidyverse packages[22m ──────────────────────────────────────────── tidyverse 2.0.0 ──
+[32m✔[39m [34mdplyr    [39m 1.2.0     [32m✔[39m [34mreadr    [39m 2.2.0
+[32m✔[39m [34mforcats  [39m 1.0.1     [32m✔[39m [34mstringr  [39m 1.6.0
+[32m✔[39m [34mggplot2  [39m 4.0.2     [32m✔[39m [34mtibble   [39m 3.3.1
+[32m✔[39m [34mlubridate[39m 1.9.5     [32m✔[39m [34mtidyr    [39m 1.3.2
+[32m✔[39m [34mpurrr    [39m 1.2.1     "
+"2","── [1mConflicts[22m ────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+[31m✖[39m [34mdplyr[39m::[32mfilter()[39m masks [34mstats[39m::filter()
+[31m✖[39m [34mdplyr[39m::[32mlag()[39m    masks [34mstats[39m::lag()
+[36mℹ[39m Use the ]8;;http://conflicted.r-lib.org/conflicted package]8;; to force all conflicts to become errors"
+"0","library(PNWColors)"
+"0","library(ggpubr)"
+"2","Warning: package ‘ggpubr’ was built under R version 4.4.3"
+"0","library(ggplot2)"
+"0","library(scales)"
+"2","
+Attaching package: ‘scales’
+
+"
+"2","The following object is masked from ‘package:purrr’:
+
+    discard
+
+"
+"2","The following object is masked from ‘package:readr’:
+
+    col_factor
+
+"
+"0","library(here)"
+"2","here() starts at /Users/emma/Library/CloudStorage/OneDrive-SharedLibraries-IndianaUniversity/O365-Lab members - 0000_Bueren - 0000_Bueren/Projects/SPbeta/0000_Lohman/SporeMOI
+"
+"0","# Define the custom theme"
+"0","theme_all_12 <- theme("
+"0","  text = element_text(size = 17),  "
+"0","  axis.title = element_text(size = 17),"
+"0","  axis.text = element_text(size = 17),"
+"0","  legend.title = element_text(size = 17),"
+"0","  legend.text = element_text(size = 17),"
+"0","  plot.title = element_text(size = 17),"
+"0","  plot.subtitle = element_text(size = 17),"
+"0","  strip.text = element_text(size = 17)"
+"0",")"
+"0",""
+"0","# Set it as the base theme for all future plots"
+"0","theme_set(theme_minimal() + theme_all_12)"
+"0",""
+"0","my.pal <- c(""#00496f"", ""#ed8b00"")"
+"0","MOI1 <- read.csv(here(""MOI/data/20251113_CombinedMOI.csv""), row.name=1)"
+"0","MOI1$virus <- ifelse(MOI1$virus==""WT"", ""Temperate"", ""Lytic"")"
+"0","MOI1 <- subset(MOI1, MOI1$moi.log==0)"
+"0",""
+"0","ggplot(MOI1, aes(x = factor(virus), color = factor(virus), fill = factor(virus), y = pfus)) +"
+"0","  geom_boxplot(position = ""dodge"", color = ""black"") +"
+"0","  geom_jitter(shape = 21, color = ""black"", fill = ""black"", width = 0.2, size = 2) +"
+"0","   ylab(""Number of Entrapped Spores"") +"
+"0","  xlab(""Strain"") +"
+"0","  ggtitle("""") + scale_y_continuous(labels=label_scientific()) +scale_y_log10() +"
+"0","  scale_fill_manual(values=my.pal) + theme(legend.title = element_blank(), legend.position=""none"")"
+"2","[38;5;250mScale for [32my[38;5;250m is already present.
+Adding another scale for [32my[38;5;250m, which will replace the existing scale.[39m"

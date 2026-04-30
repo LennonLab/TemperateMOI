@@ -1,0 +1,48 @@
+
+```{r}
+library(tidyverse)
+library(PNWColors)
+library(ggpubr)
+MOI46 <- read.csv("data/20251113_1204_MOI6_4.csv")
+
+MOI1 <- read.csv("data/20250822_1449_MOI1.csv")
+
+data <- rbind(MOI46,MOI1)
+## turn data that is TNTC or 0 (can't be used to calculate pfu/cfu) into NA
+
+data$plaque.count <- ifelse(data$plaque.count=="TNTC" | data$plaque.count=="0", NA, data$plaque.count) 
+
+## turn Count column into "numeric" category of data so that R recognizes it is numbers, not words.
+data$plaque.count <- as.numeric(data$plaque.count)
+
+#PFU/mL = PFUs/Innoc uL * 1000uL/1mL * DilutionFactor  (calculate PFU/CFU of viruses/spores)
+##make it log10, because that is better for graphing 10^X
+data$norm <- log10((data$plaque.count)/200 * 1000 * 10^data$dilution)
+data$pfus <- ((data$plaque.count)/200 * 1000 * 10^data$dilution)
+
+## remove NAs that are more likely to mess up graphs than help us with context later on
+data <- na.omit(data)
+
+data$dil.log <- log10(data$dilution)
+data$moi.log <- log10(data$MOI)
+
+
+data.group <- data %>% group_by(virus, moi.log) %>%
+  summarise(norm.avg = mean(norm))
+
+```
+```{r}
+### create pretty color palette for our graphs
+## n = 3, because we want 3 colors for 3 phages.
+pal2 <- pnw_palette(name="Starfish",n=2,type="discrete")
+
+
+
+unique(data$virus)
+
+ggplot(data.group, aes(moi.log, norm.avg, fill=virus, colour=virus)) + geom_point() + geom_smooth(method="lm")  +
+ stat_regline_equation(aes(label = paste(..eq.label.., ..rr.label.., sep = "~~~~")))
+
+
+```
+

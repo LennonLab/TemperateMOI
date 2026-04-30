@@ -1,0 +1,89 @@
+
+```{r}
+library(tidyverse)
+library(PNWColors)
+library(ggpubr)
+
+# Define the custom theme
+theme_all_12 <- theme(
+  text = element_text(size = 15),
+  axis.title = element_text(size = 15),
+  axis.text = element_text(size = 15),
+  legend.title = element_text(size = 15),
+  legend.text = element_text(size = 15),
+  plot.title = element_text(size = 15),
+  plot.subtitle = element_text(size = 15),
+  strip.text = element_text(size = 15)
+)
+
+# Set it as the base theme for all future plots
+theme_set(theme_minimal() + theme_all_12)
+
+
+MOI <- read.csv("data/20251113_CombinedMOI.csv")
+MOI$virus <- ifelse(MOI$virus=="WT", "Temperate", "Lytic")
+
+data.group <- MOI %>% group_by(virus, moi.log) %>%
+  summarise(norm.avg = mean(norm), pfu.avg = mean(pfus))
+
+
+
+```
+```{r}
+### create pretty color palette for our graphs
+## n = 3, because we want 3 colors for 3 phages.
+pal2 <- pnw_palette(name="Bay",n=5,type="discrete")
+unique(pal2)
+my.pal <- c("#00496f", "#ed8b00")
+
+#https://github.com/jakelawlor/PNWColors
+
+## + xlab("x axis") + ylab("y axis") + ggtitle("title")
+
+## linear line idk
+ggplot(data.group, aes(moi.log, pfu.avg, fill=virus, colour=virus)) + geom_point() + geom_smooth(method="lm")  +
+ stat_regline_equation(aes(label = paste(..eq.label.., ..rr.label.., sep = "~~~~"))) + xlab("Infecting Virus to Bacteria Ratio") + ylab("Number of Entrapped Spores") + scale_fill_manual(values=my.pal) + scale_color_manual(values=my.pal) + theme(legend.title = element_blank()) + scale_y_continuous(labels=label_scientific()) +scale_y_log10() + scale_x_continuous(breaks=c(-6,-4,-2,0), labels=c("1,000,000:1", "10,000:1",  "100:1", "1:1"))
+
+## linear line idk
+ggplot(data.group, aes(moi.log, pfu.avg, fill=virus, colour=virus)) + geom_point() + geom_smooth(method="lm")  +
+xlab("Infecting Virus to Bacteria Ratio") + ylab("Number of Entrapped Spores") + scale_fill_manual(values=my.pal) + scale_color_manual(values=my.pal)  + theme(legend.title = element_blank(), legend.position = "none") + scale_y_continuous(labels=label_scientific()) +scale_y_log10() + scale_x_continuous(breaks=c(-6,-4,-2,0), labels=c("1,000,000:1", "10,000:1",  "100:1", "1:1"))
+
+
+ggsave("figs/MOI_linreg.png", width=8, height=5)
+```
+
+
+ggplot(data.group, aes(moi.log, pfu.avg, fill=virus, colour=virus)) + geom_point() + geom_smooth(method="lm")  +
+xlab("Infecting Virus to Bacteria Ratio") + ylab("Number of Entrapped Spores") + scale_fill_manual(values=my.pal) + scale_color_manual(values=my.pal)  + theme(legend.title = element_blank()) + scale_y_continuous(labels=label_scientific()) +scale_y_log10() + scale_x_continuous(breaks=c(-6,-4,-2,0), labels=c("1,000,000:1", "10,000:1",  "100:1", "1:1"))
+ggsave("figs/MOI_linreg_legend.png", width=8, height=5)
+
+
+aov.null <- lm(data.group$norm.avg~1)
+aov.vir <- lm(data.group$norm.avg~data.group$virus)
+aov.moi <- lm(data.group$norm.avg~data.group$moi.log)
+aov.add <- lm(data.group$norm.avg~data.group$virus+data.group$moi.log)
+aov.mult <- lm(data.group$norm.avg~data.group$virus*data.group$moi.log)
+```
+data.group %>%
+  group_by(virus) %>%
+  summarise(
+    rho = cor(moi, norm.avg, method = "spearman"),
+    p.value = cor.test(moi.log, norm.avg, method = "spearman")$p.value
+  )
+
+summary(aov.vir)
+summary(aov.moi)
+
+## check which model is best, lowest is best!
+AIC(aov.null, aov.vir, aov.moi, aov.add, aov.mult) ### additive is best!
+
+
+## spearman's corr test
+ggplot(data.group, aes(moi.log, norm.avg, fill = virus, colour = virus)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  stat_cor(method = "spearman", aes(label = paste(..r.label.., ..p.label.., sep = "~~~~")))
+
+
+
+

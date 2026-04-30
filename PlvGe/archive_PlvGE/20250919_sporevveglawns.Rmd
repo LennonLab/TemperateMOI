@@ -1,0 +1,85 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+```{r}
+data_complete<- read.csv("R_Practice/20250919_1143_SporeLawnvVegLawn.csv")
+
+data <- data_complete
+## turn data that is TNTC or 0 (can't be used to calculate pfu/cfu) into NA
+data <- subset(data, data$count!="TNTC" & data$count!="WO" & data$count!="0")
+
+## turn Count column into "numeric" category of data so that R recognizes it is numbers, not words.
+data$count <- as.numeric(data$count)
+
+#PFU/mL = PFUs/Innoc uL * 1000uL/1mL * DilutionFactor  (calculate PFU/CFU of viruses/spores)
+##make it log10, because that is better for graphing 10^X
+data$norm <- log10((data$count)/200 * 1000 * 10^data$dilution)
+
+
+
+
+```
+
+```{r}
+library(ggplot2)
+
+ggplot(data, aes(x = factor(lawn), fill = factor(lawn), y = norm )) + geom_boxplot()
+
+
+
+ggplot(data, aes(x = factor(lawn), fill = factor(lawn), y = norm )) +
+  geom_boxplot(binaxis = "y", stackdir = "center", position = "dodge", color = "black") + ylab("log10 Plates per mL") + ggtitle("Plaques per Lawn") + xlab("Lawn Typw")  +  geom_jitter(
+    aes(fill = factor(lawn)),  shape = 21, color = "black", width = 0.2, size = 2) + 
+scale_y_continuous(limits = c(0, 9), breaks = seq(0, 9, 1))+ 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+```{r}
+
+## null model
+a.null <- aov(norm ~ 1, data = data)
+summary(a.null)
+
+
+
+## basic anova of just does lawn change the number of counts
+a1 <- aov(norm ~ lawn,
+  data = data)
+summary(a1)
+
+
+
+
+## check which model is best, lowest is best!
+AIC(a.null, a1)
+
+  
+```
+```{r}
+## what if OD doesn't matter
+
+
+ggplot(data, aes(x = factor(type), fill = factor(type), y = norm )) +
+  geom_boxplot(binaxis = "y", stackdir = "center", position = "dodge", color = "black") + ylab("log10 Plates per mL") + ggtitle("Plaques per Lawn") + xlab("Lawn Typw")  +  geom_jitter(
+    aes(fill = factor(type)),  shape = 21, color = "black", width = 0.2, size = 2) + 
+scale_y_continuous(limits = c(0, 9), breaks = seq(0, 9, 1))+ 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+## basic anova of just does lawn change the number of counts
+a1 <- aov(norm ~ type,
+  data = data)
+summary(a1)
+
+
+
+
+## check which model is best, lowest is best!
+AIC(a.null, a1)
+
+
+
+
+```
+

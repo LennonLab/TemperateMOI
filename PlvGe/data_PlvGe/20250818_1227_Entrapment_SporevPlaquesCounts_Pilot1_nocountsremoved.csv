@@ -1,0 +1,9 @@
+Phage,Dilution,Count_Plaques,Count_Spores
+SpBeta::km_lysogen,3,43,TNTC
+SpBeta::km_lysogen,4,0,TNTC
+SpBeta::km_lysogen,5,0,270
+SpBeta::km_lysogen,6,0,32
+SpBeta::km_lysogen,7,0,2
+phi3T::km_lysogen,3,TNTC,TNTC
+phi3T::km_lysogen,5,26,166
+phi3T::km_lysogen,6,7,21

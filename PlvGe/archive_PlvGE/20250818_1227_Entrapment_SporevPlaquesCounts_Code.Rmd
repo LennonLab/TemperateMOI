@@ -1,0 +1,130 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+data cleaning
+```{r}
+
+#library(tidyverse)
+library(tidyverse)
+library(ggplot2)
+library(PNWColors)
+
+pal2 <- pnw_palette(name="Starfish",n=2,type="discrete")
+
+data_short1 <- read.csv("data/20250818_1227_Entrapment_SporevPlaquesCounts_Pilot1_nocountsremoved.csv")
+data_short2 <- read.csv("data/20250822_1449_Entrapment_phi3TPlaquesvsSpores_MOI1.csv")
+
+data_short <- rbind(data_short1, data_short2)
+
+#data_short$safe_count_spores <- data_short$Count_Spores
+#data_trim <- subset(data_short, data_short$Count_Plaques!="TNTC" & data_short$Count_Spores!="TNTC")
+#data_trim <- subset(data_trim, data_trim$Count_Plaques!="0" & data_trim$Count_Spores!="0")
+data_short$Count_Spores <- ifelse(data_short$Count_Spores=="TNTC" | data_short$Count_Spores=="0", NA, data_short$Count_Spores)
+data_short$Count_Plaques <- ifelse(data_short$Count_Plaques=="TNTC" | data_short$Count_Plaques=="0", NA, data_short$Count_Plaques) 
+
+data <- data_short %>%
+  pivot_longer(
+    cols = c(Count_Plaques, Count_Spores),   # columns to pivot into longer format
+    names_to = "Type",        # new column that will hold old column names
+    values_to = "Count"           # new column that will hold old values
+  )
+
+data$Type <- gsub("Count_", "", data$Type)
+
+data$Count <- as.numeric(data$Count)
+
+#PFU/mL = PFUs/Innoc uL * 1000uL/1mL * DilutionFactor
+data$norm <- log10((data$Count)/200 * 1000 * 10^data$Dilution)
+
+
+data <- unite(data, "DilType3", c("Dilution", "Phage"), sep = "_", remove = FALSE, na.rm = FALSE)
+data <- unite(data, "DilType4", c("Phage", "Type"), sep = "_", remove = FALSE, na.rm = FALSE)
+
+
+### remove any na data that will mess with graphing
+data <- na.omit(data)
+```
+
+### analysis
+```{r}
+
+### all points
+ggplot(data, aes(x = factor(DilType4), color=factor(Type), fill = factor(Type), y = norm )) +
+  geom_boxplot(binaxis = "y", stackdir = "center", position = "dodge") + ylab("log10 Count per mL") + ggtitle("Induced Prophage to Germinated Spores") + xlab("Lysogen")  + geom_jitter() + scale_y_continuous(breaks = seq(0, 10, 1)) +
+coord_cartesian(ylim = c(5, 9))+ scale_fill_manual(values=pal2) +  scale_color_manual(values=pal2)
+
+###ggsave("pilot_graph.png") 
+
+
+### just lysogens
+data_ly <- subset(data, data$Phage=="SpBeta::km_lysogen" | data$Phage=="phi3T::km_lysogen")
+ggplot(data_ly, aes(x = factor(DilType4), color=factor(Type), fill = factor(Type), y = norm )) + geom_boxplot(binaxis = "y", stackdir = "center", position = "dodge") + ylab("log10 Count per mL") + ggtitle("Induced Prophage to Germinated Spores") + xlab("Lysogen")  + geom_jitter() + 
+scale_y_continuous(limits = c(0, 9), breaks = seq(0, 9, 1))
+  
+
+a1 <- aov(norm ~ Type * Phage,
+  data = data_ly)
+summary(a1)
+
+
+data_phily <- subset(data_ly, data_ly$Phage=="phi3T::km_lysogen")
+ggplot(data_phily, aes(x = factor(DilType4), color=factor(Type), fill = factor(Type), y = norm )) + geom_boxplot(binaxis = "y", stackdir = "center", position = "dodge") + ylab("log10 Count per mL") + ggtitle("Induced Prophage to Germinated Spores") + xlab("Lysogen")  + geom_jitter() + 
+scale_y_continuous(limits = c(0, 9), breaks = seq(0, 9, 1))
+  
+a2 <- aov(norm ~ Type,
+  data = data_phily)
+summary(a2)
+
+ggplot(data2, aes(x = factor(DilType4), color=factor(Type), fill = factor(Type), y = norm )) +
+  geom_boxplot(binaxis = "y", stackdir = "center", position = "dodge") + ylab("log10 Count per mL") + ggtitle("Induced Prophage to Germinated Spores") + xlab("Lysogen")  + geom_jitter() + 
+scale_y_continuous(limits = c(0, 9), breaks = seq(0, 9, 1))
+  
+###ggsave("pilot_graph.png") 
+
+```
+
+
+```{r}
+data <- unite(data, "DilType", c("Phage", "Dilution", "Type"), sep = "_", remove = FALSE, na.rm = FALSE)
+data <- unite(data, "DilType2", c("Dilution", "Type"), sep = "_", remove = FALSE, na.rm = FALSE)
+data <- unite(data, "DilType3", c("Dilution", "Phage"), sep = "_", remove = FALSE, na.rm = FALSE)
+
+
+data_clean <- data
+data_clean$Count <- ifelse(data_clean$Count=="TNTC", 300, data_clean$Count)
+data_clean$Count <- as.numeric(data_clean$Count)
+
+
+data_clean$Ratio <- data_clean$Phage/data_clean$
+
+ggplot(data_clean, aes(x = factor(DilType3), y = Count, fill = factor(Type))) +
+  geom_col(position = "dodge") +
+  ylab("Phage Genome GC%") + scale_fill_manual(values=pal2)
+
+```
+
+
+
+```{r}
+
+data_short
+data_short$Count_Plaques <- ifelse(data_short$Count_Plaques=="TNTC", 300, data_short$Count_Plaques)
+data_short$Count_Spores <- ifelse(data_short$Count_Spores=="TNTC", 300, data_short$Count_Spores)
+
+data_short$Count_Plaques <- as.numeric(data_short$Count_Plaques)
+data_short$Count_Spores <- as.numeric(data_short$Count_Spores)
+
+
+
+data_short$ratio <- data_short$Count_Plaques/data_short$Count_Spores
+
+data_short <- unite(data_short, "DilType3", c("Dilution", "Phage"), sep = "_", remove = FALSE, na.rm = FALSE)
+
+
+ggplot(data_short, aes(x = factor(Dilution), y = ratio, fill = factor(Phage))) +
+  geom_col(position = "dodge") +
+  ylab("# of Plaques / # of Spores") + scale_fill_manual(values=pal2) + ggtitle("# of Plaques / # of Spores")
+
+```

@@ -1,0 +1,13 @@
+﻿dilution,count,lawn,OD,type,host
+3,WO,d6_spores3,0.3,spores,d6
+4,TNTC,d6_spores3,0.3,spores,d6
+5,126,d6_spores3,0.3,spores,d6
+6,8,d6_spores3,0.3,spores,d6
+3,TNTC,d6_veg3,0.3,veg,d6
+4,44,d6_veg3,0.3,veg,d6
+5,38,d6_veg3,0.3,veg,d6
+6,9,d6_veg3,0.3,veg,d6
+3,TNTC,d6_veg5,0.5,veg,d6
+4,350,d6_veg5,0.5,veg,d6
+5,37,d6_veg5,0.5,veg,d6
+6,3,d6_veg5,0.5,veg,d6

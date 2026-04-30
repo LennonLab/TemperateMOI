@@ -1,0 +1,66 @@
+
+```{r}
+library(tidyverse)
+library(PNWColors)
+library(ggpubr)
+
+
+MOI <- read.csv("data/20251113_CombinedMOI.csv")
+
+
+data.group <- MOI %>% group_by(virus, moi.log) %>%
+  summarise(norm.avg = mean(norm))
+
+```
+```{r}
+### create pretty color palette for our graphs
+## n = 3, because we want 3 colors for 3 phages.
+pal2 <- pnw_palette(name="Starfish",n=2,type="discrete")
+
+
+### +xlab("") + ylab("") + ggtitle("")
+
+## linear line idk
+ggplot(data.group, aes(moi.log, norm.avg, fill=virus, colour=virus)) + geom_point() + geom_smooth(method="lm")  +
+ stat_regline_equation(aes(label = paste(..eq.label.., ..rr.label.., sep = "~~~~")))
+
+
+
+ggsave("figs/MOI_linreg.png")
+
+
+aov.null <- lm(data.group$norm.avg~1)
+aov.vir <- lm(data.group$norm.avg~data.group$virus)
+aov.moi <- lm(data.group$norm.avg~data.group$moi.log)
+aov.add <- lm(data.group$norm.avg~data.group$virus+data.group$moi.log)
+aov.mult.lm <- lm(data.group$norm.avg~data.group$virus*data.group$moi.log)
+summary(aov.mult.lm)
+
+
+data.group %>%
+  group_by(virus) %>%
+  summarise(
+    rho = cor(moi.log, norm.avg, method = "spearman"),
+    p.value = cor.test(moi.log, norm.avg, method = "spearman")$p.value
+  )
+
+## check which model is best, lowest is best!
+AIC(aov.null, aov.vir, aov.moi, aov.add, aov.mult) ### additive is best!
+
+anova(aov.null, aov.vir, aov.moi, aov.add, aov.mult)
+
+plot(aov.mult, which = 1)   # Residuals vs fitted
+plot(aov.mult, which = 2)   # Normal Q-Q plot
+```
+
+
+## spearman's corr test
+ggplot(data.group, aes(moi.log, norm.avg, fill = virus, colour = virus)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  stat_cor(method = "spearman", aes(label = paste(..r.label.., ..p.label.., sep = "~~~~")))
+
+
+
+```
+

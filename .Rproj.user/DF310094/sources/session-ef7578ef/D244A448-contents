@@ -1,0 +1,21 @@
+###README FOR 0000_Lohman/SporeMOI
+
+## data/:
+-- .csv files of plaque counts of phi3t lytic and WT across multiple MOIs and dilutions
+-- data from is repeated iterations (different mois) between 08/2025-11/2025. 
+-- briefly: d6 was treated with equivalent mois of lytic and wt phi3t, allowed to incubate overnight,
+treated with heat to isolate spores, and counted.
+
+
+## Code:
+-- 202511133_1301_moicleaning: 
+normalization of all plaque count MOI data of lytic vs. wt phi3t across trials
+
+-- 20251113_1215_allMOIS
+plotting regression relationship between MOI & phage lifestyle (lytic, wt phi3t) 
+
+-- 20251113_1444_PilotFig
+PFU comparison across MOI of 1 for lytic and wt phi3t -- (note that MOI is listed as 0 in dataset because it is in logform. MOI log = 0 is MOI =1)
+
+
+## archive/ folder can be safely ignored (it includes reference code that was used to inform SporeMOI and/or old code drafts)

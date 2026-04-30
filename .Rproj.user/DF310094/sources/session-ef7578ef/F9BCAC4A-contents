@@ -1,0 +1,186 @@
+---
+title: "Untitled"
+output: html_document
+date: "2025-08-22"
+---
+### data cleaning
+```{r}
+
+### load libraries
+library(tidyverse)
+library(ggplot2)
+library(PNWColors)
+library(here)
+
+## load data
+## og pilot data (spbeta and phi3t lysogens only)
+data_short1 <- read.csv(here("PlvGe/data_PlvGe/20250818_1227_Entrapment_SporevPlaquesCounts_Pilot1_nocountsremoved.csv"))
+
+## 8222025 data of MOI one with lytic and wild type infection, plus lysogens
+data_short2 <- read.csv(here("PlvGe/data_PlvGe/20250822_1449_Entrapment_phi3TPlaquesvsSpores_MOI1.csv"))
+
+### combine datasets
+data_short <- rbind(data_short1, data_short2)
+
+## turn data that is TNTC or 0 (can't be used to calculate pfu/cfu) into NA
+data_short$Count_Spores <- ifelse(data_short$Count_Spores=="TNTC" | data_short$Count_Spores=="0", NA, data_short$Count_Spores)
+data_short$Count_Plaques <- ifelse(data_short$Count_Plaques=="TNTC" | data_short$Count_Plaques=="0", NA, data_short$Count_Plaques) 
+
+## combine count_plaques and count_spores into just one count column
+data <- data_short %>%
+  pivot_longer(
+    cols = c(Count_Plaques, Count_Spores),   # columns to pivot into longer format
+    names_to = "Type",        # new column that will hold old column names
+    values_to = "Count"           # new column that will hold old values
+  )
+
+## remove "Count_" from the front of Type column so it just says Spores or Plaques
+data$Type <- gsub("Count_", "", data$Type)
+
+
+## turn Count column into "numeric" category of data so that R recognizes it is numbers, not words.
+data$Count <- as.numeric(data$Count)
+
+#PFU/mL = PFUs/Innoc uL * 1000uL/1mL * DilutionFactor  (calculate PFU/CFU of viruses/spores)
+##make it log10, because that is better for graphing 10^X
+data$norm <- log10((data$Count)/200 * 1000 * 10^data$Dilution)
+
+
+## Make some new columns with descriptive names to make graphing pretty
+data <- unite(data, "DilType3", c("Dilution", "Phage"), sep = "_", remove = FALSE, na.rm = FALSE)
+data <- unite(data, "DilType4", c("Phage", "Type"), sep = "_", remove = FALSE, na.rm = FALSE)
+
+
+data <- data %>% separate(col = Phage, into = c("PhageS", "Strain"), sep = "_", remove=FALSE)
+data$Strain[is.na(data$Strain)] <- "WT"
+data$Strain <- ifelse(data$Strain=="dSroF", "Lytic", data$Strain)
+data$Strain <- ifelse(data$Strain=="lysogen", "Prophage", data$Strain)
+data <- unite(data, "DilType5", c("Strain", "Type"), sep = "_", remove = FALSE, na.rm = FALSE)
+
+
+## remove NAs that are more likely to mess up graphs than help us with context later on
+data <- na.omit(data)
+
+
+
+### FOR JUST PLAQUE COUNTS
+plaques <- subset(data, data$Type=="Plaques")
+```
+
+our data is now clean! yay!
+
+
+
+### Comparing only Phi3T plaques vs. germinated spores
+We don't have very much SpBeta data, so let's remove it for now until we collect more
+```{r}
+phi3t <- subset(data, data$Phage!="SpBeta::km_lysogen")
+
+ggplot(phi3t, aes(x = factor(DilType5), fill = factor(Type), y = norm )) +
+  geom_boxplot(binaxis = "y", stackdir = "center", position = "dodge", color = "black") + ylab("log10 Count per mL") + xlab("phi3T strains")  + geom_jitter(
+    aes(fill = factor(Type)),  shape = 21, color = "black", width = 0.2, size = 2) +
+scale_y_continuous(limits = c(0, 9), breaks = seq(0, 9, 1))+scale_fill_manual(values=pal2) +  scale_color_manual(values=pal2)+ ggtitle("phi3T strain Plaque & Spore Counts")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  
+ggsave(here("PlvGe/figs_PlvGe/Phi3T_PlaquesvsSpores.png"))  
+  
+
+## null model
+a.null <- aov(norm ~ 1, data = phi3t)
+summary(a.null)
+
+
+
+## basic anova of just does type (spore/plaque) change the number of counts
+a1 <- aov(norm ~ Type,
+  data = phi3t)
+summary(a1)
+
+
+
+
+## check which model is best, lowest is best!
+AIC(a.null, a1)
+  
+```
+
+
+
+## just lysogen data (phi3T and spbeta)
+
+```{r}
+
+### just lysogens
+data_ly <- subset(data, data$Phage=="SpBeta::km_lysogen" | data$Phage=="phi3T::km_lysogen")
+
+
+ggplot(data_ly, aes(x = factor(DilType4), color=factor(Type), fill = factor(Type), y = norm )) + geom_boxplot(binaxis = "y", stackdir = "center", position = "dodge", color = "black") + ylab("log10 Count per mL") + ggtitle("Induced Prophages (Plaques) to Germinated Spores") + xlab("Lysogen")  + geom_jitter(
+    aes(fill = factor(Type)),  shape = 21, color = "black", width = 0.2, size = 2) +
+scale_y_continuous(limits = c(0, 9), breaks = seq(0, 9, 1))+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) + scale_fill_manual(values=pal2) +  scale_color_manual(values=pal2)
+  
+
+## null model
+a.null <- aov(norm ~ 1, data = data_ly)
+summary(a.null)
+
+
+
+## basic anova of just does type (spore/plaque) change the number of counts
+a1 <- aov(norm ~ Type,
+  data = data_ly)
+summary(a1)
+
+## two way anova, does type and phage species impact count number
+
+a2 <- aov(norm ~ Type + Phage,
+  data = data_ly)
+summary(a2)
+
+
+## two way anova, interactive with type and phage species impact count number
+
+a3 <- aov(norm ~ Type * Phage,
+  data = data_ly)
+summary(a3)
+
+## check which model is best, lowest is best!
+AIC(a.null, a1, a2, a3)
+
+
+##just compare phi3T lysogen spore vs. plaque count
+
+data_phily <- subset(data_ly, data_ly$Phage=="phi3T::km_lysogen")
+ggplot(data_phily, aes(x = factor(DilType4), color=factor(Type), fill = factor(Type), y = norm )) + geom_boxplot(binaxis = "y", stackdir = "center", position = "dodge", color="black") + ylab("log10 Count per mL") + ggtitle("Induced Prophage (Plaques) to Germinated Spores") + xlab("Lysogen")  + geom_jitter(
+    aes(fill = factor(Type)),  shape = 21, color = "black", width = 0.2, size = 2) +
+scale_y_continuous(limits = c(0, 9), breaks = seq(0, 9, 1))+ scale_fill_manual(values=pal2) +  scale_color_manual(values=pal2)
+  
+
+  
+a2 <- aov(norm ~ Type,
+  data = data_phily)
+summary(a2)
+
+
+
+
+```
+
+
+### Comparing Just Plaque counts to Each Other (has one spbeta lysogen treatmeant)
+
+```{r}
+### create pretty color palette for our graphs
+## n = 3, because we want 3 colors for 3 phages.
+pal2 <- pnw_palette(name="Starfish",n=2,type="discrete")
+
+
+ggplot(plaques, aes(x = factor(DilType4), fill = factor(Type), y = norm )) +
+  geom_boxplot(binaxis = "y", stackdir = "center", position = "dodge", color = "black") + ylab("log10 Count per mL") + ggtitle("Induced Prophage to Germinated Spores") + xlab("Lysogen")  +  geom_jitter(
+    aes(fill = factor(Type)),  shape = 21, color = "black", width = 0.2, size = 2) + 
+scale_y_continuous(limits = c(0, 9), breaks = seq(0, 9, 1))+ scale_fill_manual(values=pal2) +  scale_color_manual(values=pal2)+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+#ggsave(here("PlvGe/figs_PlvGe/Lytic_v_Induction_v_SporeCount.png"))
+```
