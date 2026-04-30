@@ -1,23 +1,23 @@
 # For MOI/
-## data/:
+
+### Code:
+- 202511133_1301_moicleaning.Rmd 
+normalization of all plaque count MOI data of lytic vs. wt phi3t across trials
+
+- 20251113_1215_allMOIS.Rmd
+plotting regression relationship between MOI & phage lifestyle (lytic, wt phi3t) 
+
+- 20251113_1444_PilotFig.Rmd
+PFU comparison across MOI of 1 for lytic and wt phi3t -- (note that MOI is listed as 0 in dataset because it is in logform. MOI log = 0 is MOI =1)
+
+### data/:
 - .csv files of plaque counts of phi3t lytic and WT across multiple MOIs and dilutions
 - data from is repeated iterations (different mois) between 08/2025-11/2025. 
 - briefly: d6 was treated with equivalent mois of lytic and wt phi3t, allowed to incubate overnight,
 treated with heat to isolate spores, and counted.
 
 
-## Code:
-- 202511133_1301_moicleaning: 
-normalization of all plaque count MOI data of lytic vs. wt phi3t across trials
-
-- 20251113_1215_allMOIS
-plotting regression relationship between MOI & phage lifestyle (lytic, wt phi3t) 
-
-- 20251113_1444_PilotFig
-PFU comparison across MOI of 1 for lytic and wt phi3t -- (note that MOI is listed as 0 in dataset because it is in logform. MOI log = 0 is MOI =1)
-
-
-## archive/ folder 
+### archive/ folder 
 - can be safely ignored (it includes reference code that was used to inform SporeMOI and/or old code drafts)
 
 # For PlvGe (Plaques vs. Germinated Spores)
@@ -30,8 +30,8 @@ PFU comparison across MOI of 1 for lytic and wt phi3t -- (note that MOI is liste
 - most data is from 08-09 2025 pilot to see if entrapment was even possible in temperate phage,  but later, 20251113_1204_MOI6_4 was added (from spore MOI) since methods were equivalent & plaque/spore count is known.
 
 
-### code:
-- 20250924_LyticVsWt_Collated combines all data/ and analysis related to plaque count vs. germinated count
+### Code:
+- 20250924_LyticVsWt_Collated.Rmd combines all data/ and analysis related to plaque count vs. germinated count
 - Important to note that the three types of treatments referenced in this dataset mean=
 -- Lytic infection:  d6 cells exposed to the dSrof lytic mutant, incubated ON and isolated for spores.
 -- WT infection: d6 cells exposed to WT temperate phage, incubated ON and isolated for spores.
@@ -42,6 +42,6 @@ PFU comparison across MOI of 1 for lytic and wt phi3t -- (note that MOI is liste
 - 20250919_sporevveglawns.Rmd looks at the difference between countable plaques of phi3T lysogens when plated on vegetative d6 lawns vs. spore d6 lawns.
 
 ### archive_PlvGe
--- original drafts of the code that resulted in 20250924_LyticVsWt_Collated
+-- original drafts of the code that resulted in 20250924_LyticVsWt_Collated.Rmd
 - was initally in multiple parts/analysis, so LyticVsWt_Collated combines these efforts
 - can be safely ignored and may be nonfunctional, but are kept for posterity/reference

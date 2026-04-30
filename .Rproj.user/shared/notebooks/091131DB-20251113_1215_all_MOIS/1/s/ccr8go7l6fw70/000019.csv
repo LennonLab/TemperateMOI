@@ -1,5 +1,0 @@
-"0","## linear line idk"
-"0","ggplot(data.group, aes(moi.log, pfu.avg, fill=virus, colour=virus)) + geom_point() + geom_smooth(method=""lm"")  +"
-"0","xlab(""Infecting Virus to Bacteria Ratio"") + ylab(""Number of Entrapped Spores"") + scale_fill_manual(values=my.pal) + scale_color_manual(values=my.pal)  + theme(legend.title = element_blank(), legend.position = ""none"") + scale_y_continuous(labels=label_scientific()) +scale_y_log10() + scale_x_continuous(breaks=c(-6,-4,-2,0), labels=c(""1,000,000:1"", ""10,000:1"",  ""100:1"", ""1:1""))"
-"2","[38;5;250mScale for [32my[38;5;250m is already present.
-Adding another scale for [32my[38;5;250m, which will replace the existing scale.[39m"
