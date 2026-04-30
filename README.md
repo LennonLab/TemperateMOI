@@ -43,20 +43,21 @@ treated with heat to isolate spores, and counted.
 
 ### Code:
 - 20250924_LyticVsWt_Collated.Rmd combines all data/ and analysis related to plaque count vs. germinated count
-- Important to note that the three types of treatments referenced in this dataset mean
+- Important to note what the three types of treatments referenced in this dataset mean:
 
--- Lytic infection:  d6 cells exposed to the dSrof lytic mutant, incubated ON and isolated for spores.
+1) Lytic infection:  d6 cells exposed to the dSrof lytic mutant, incubated ON and isolated for spores.
 
--- WT infection: d6 cells exposed to WT temperate phage, incubated ON and isolated for spores.
+2) WT infection: d6 cells exposed to WT temperate phage, incubated ON and isolated for spores.
 
--- Prophage (lysogen) infection: d6 cells with integrated prophage-- so all cells already carry the temperate phage prior to the experiment, and are therefore 100% pre-infected with the WT strain. (i.e. every cell already has a prophage, no infection necessary).
+3) Prophage (lysogen) infection: d6 cells with integrated prophage (so all cells already carry the temperate phage prior to the experiment, and are therefore 100% pre-infected with the WT strain)
 
 - the purpose of including prophage was to see if phage plaques was equivalent to total infected "virospores" (i.e. spores w/ prophages). data suggests that implies are always more spores able to germinate then plaques are counted, suggesting that counting may not be perfectly efficient (possibly we only visibly see ~x% plaques out of 100 virospores) 
+
 
 
 - 20250919_sporevveglawns.Rmd looks at the difference between countable plaques of phi3T lysogens when plated on vegetative d6 lawns vs. spore d6 lawns.
 
 ### archive_PlvGe
--- original drafts of the code that resulted in 20250924_LyticVsWt_Collated.Rmd
+- original drafts of the code that resulted in 20250924_LyticVsWt_Collated.Rmd
 - was initally in multiple parts/analysis, so LyticVsWt_Collated combines these efforts
 - can be safely ignored and may be nonfunctional, but are kept for posterity/reference
