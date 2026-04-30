@@ -51,10 +51,6 @@ treated with heat to isolate spores, and counted.
 
 3) Prophage (lysogen) infection: d6 cells with integrated prophage (so all cells already carry the temperate phage prior to the experiment, and are therefore 100% pre-infected with the WT strain)
 
-- the purpose of including prophage was to see if phage plaques was equivalent to total infected "virospores" (i.e. spores w/ prophages). data suggests that implies are always more spores able to germinate then plaques are counted, suggesting that counting may not be perfectly efficient (possibly we only visibly see ~x% plaques out of 100 virospores) 
-
-
-
 - 20250919_sporevveglawns.Rmd looks at the difference between countable plaques of phi3T lysogens when plated on vegetative d6 lawns vs. spore d6 lawns.
 
 ### archive_PlvGe
