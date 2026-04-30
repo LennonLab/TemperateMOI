@@ -1,6 +1,7 @@
-# Readme for TemperateMOI
+# TemperateMOI
 
 This repo contains two small projects.
+
 1 ) MOI:
 - Determines if temperate phages can entrap spores & explores the relationship with MOI
 
@@ -8,7 +9,7 @@ This repo contains two small projects.
 - Compares the ratios of plaques vs. the number of countable germinated spores from the same mixture.
 
 
-# MOI/
+## MOI/
 
 ### Code:
 - 202511133_1301_moicleaning.Rmd 
@@ -30,7 +31,7 @@ treated with heat to isolate spores, and counted.
 ### archive/ folder 
 - can be safely ignored (it includes reference code that was used to inform SporeMOI and/or old code drafts)
 
-# PlvGe (Plaques vs. Germinated Spores)
+## PlvGe (Plaques vs. Germinated Spores)
 
 ### PlvGe_data/ 
 - plaque and germinated spore counts from both spbeta and phi3t (lytic & wt phenotypes) at various MOIs (mostly 1)
