@@ -9,7 +9,7 @@ This repo contains two small projects.
 - Compares the ratios of plaques vs. the number of countable germinated spores from the same mixture.
 
 
-## MOI/
+## MOI
 
 ### Code:
 - 202511133_1301_moicleaning.Rmd 
